@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Omni Impact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --gray-light: #f5f5f7;
+            --gray-medium: #86868b;
+            --gray-dark: #1d1d1f;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--primary-white);
+            color: var(--gray-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 15px 50px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        /* Demo Hero Section */
+        .demo-hero {
+            padding: 140px 50px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center top, 
+                rgba(0, 0, 0, 0.02) 0%,
+                transparent 70%);
+            pointer-events: none;
+        }
+
+        .demo-hero h1 {
+            font-size: clamp(48px, 6vw, 64px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .demo-hero p {
+            font-size: clamp(18px, 2.5vw, 22px);
+            color: var(--gray-medium);
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+
+        /* Demo Boxes Section */
+        .demo-section {
+            padding: 80px 50px 120px;
+            background: var(--gray-light);
+            position: relative;
+        }
+
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 60px;
+        }
+
+        .demo-box {
+            background: var(--primary-white);
+            border-radius: 25px;
+            padding: 80px 50px;
+            text-align: center;
+            transition: all 0.4s var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease 0.4s forwards;
+        }
+
+        .demo-box:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .demo-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.03) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .demo-box:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        .demo-box:hover::before {
+            opacity: 1;
+        }
+
+        .demo-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 40px;
+            background: var(--gray-light);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            transition: all 0.4s ease;
+        }
+
+        .demo-box:hover .demo-icon {
+            transform: scale(1.1);
+            background: var(--primary-black);
+        }
+
+        .demo-box:hover .demo-icon {
+            color: var(--primary-white);
+        }
+
+        .demo-box h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        .demo-box p {
+            font-size: 18px;
+            color: var(--gray-medium);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .demo-cta {
+            display: inline-block;
+            padding: 14px 35px;
+            background: var(--primary-black);
+            color: var(--primary-white);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .demo-box:hover .demo-cta {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Planetary Curve Animation */
+        .planetary-curve {
+            position: absolute;
+            bottom: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 60%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.7;
+        }
+
+        .planet-edge {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 80%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center bottom, 
+                rgba(0, 0, 0, 0.02) 0%,
+                rgba(0, 0, 0, 0.01) 30%,
+                transparent 70%);
+            filter: blur(1px);
+        }
+
+        .light-streak {
+            position: absolute;
+            bottom: 40%;
+            left: -10%;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(0, 0, 0, 0.1) 20%,
+                rgba(0, 0, 0, 0.15) 50%,
+                rgba(0, 0, 0, 0.1) 80%,
+                transparent 100%);
+            filter: blur(1px);
+            animation: glideAcrossPlanet 18s ease-in-out infinite;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 60px 50px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glideAcrossPlanet {
+            0% {
+                left: -10%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: 110%;
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .demo-box {
+                padding: 60px 30px;
+            }
+
+            .planetary-curve {
+                bottom: -50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: inherit;">Omni Impact</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="demo.html">Demo</a></li>
+                <li><a href="index.html#products">Products</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="demo-hero">
+        <h1>Experience Our AI Solutions</h1>
+        <p>Explore interactive demos of HomeIQ and DineIQ to see how our AI can transform your business</p>
+    </section>
+
+    <section class="demo-section">
+        <div class="planetary-curve">
+            <div class="planet-edge"></div>
+            <div class="light-streak"></div>
+        </div>
+        <div class="demo-container">
+            <a href="homeiq.html" class="demo-box">
+                <div class="demo-icon">🏠</div>
+                <h2>HomeIQ</h2>
+                <p>Experience our AI-powered real estate platform with intelligent property matching, virtual tours, and automated client assistance.</p>
+                <span class="demo-cta">Try Demo</span>
+            </a>
+
+            <a href="dineiq.html" class="demo-box">
+                <div class="demo-icon">🍽️</div>
+                <h2>DineIQ</h2>
+                <p>Discover how our restaurant AI handles orders, reservations, and customer service with natural conversation and smart automation.</p>
+                <span class="demo-cta">Try Demo</span>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Omni Impact. Crafted with precision and purpose.</p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html> 

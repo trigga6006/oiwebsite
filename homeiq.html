@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeIQ - AI-Powered Real Estate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --gray-light: #f5f5f7;
+            --gray-medium: #86868b;
+            --gray-dark: #1d1d1f;
+            --blue-accent: #007aff;
+            --green-accent: #34c759;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--primary-white);
+            color: var(--gray-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--blue-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .back-btn {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 50px 80px;
+            background: linear-gradient(135deg, var(--blue-accent) 0%, #0056b3 100%);
+            color: var(--primary-white);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: clamp(18px, 2.5vw, 22px);
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 60px 50px;
+            background: var(--gray-light);
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 16px 20px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--primary-white);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--blue-accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .filter-select {
+            padding: 16px 20px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--primary-white);
+            cursor: pointer;
+        }
+
+        .search-btn {
+            padding: 16px 30px;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Properties Section */
+        .properties-section {
+            padding: 80px 50px;
+            background: var(--primary-white);
+        }
+
+        .properties-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .property-card {
+            background: var(--primary-white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 250px;
+            background: var(--gray-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image::before {
+            content: '🏠';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            opacity: 0.3;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--green-accent);
+            color: var(--primary-white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .property-status.sold {
+            background: var(--gray-medium);
+        }
+
+        .property-content {
+            padding: 30px;
+        }
+
+        .property-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--blue-accent);
+            margin-bottom: 10px;
+        }
+
+        .property-address {
+            font-size: 18px;
+            color: var(--gray-medium);
+            margin-bottom: 20px;
+        }
+
+        .property-details {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--gray-medium);
+        }
+
+        .property-description {
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--gray-dark);
+            margin-bottom: 25px;
+        }
+
+        .property-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px 20px;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            color: var(--gray-dark);
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blue-accent);
+            color: var(--blue-accent);
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .ai-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .ai-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 122, 255, 0.4);
+        }
+
+        .ai-chat {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 400px;
+            background: var(--primary-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-chat.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .message.ai {
+            background: var(--gray-light);
+            margin-right: auto;
+        }
+
+        .message.user {
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            margin-left: auto;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 25px;
+            outline: none;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 60px 50px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .search-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .properties-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .ai-chat {
+                width: 300px;
+                height: 350px;
+                bottom: 70px;
+                right: -20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🏠 HomeIQ</div>
+            <ul class="nav-links">
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#mortgage">Mortgage</a></li>
+                <li><a href="#sell">Sell</a></li>
+            </ul>
+            <a href="demo.html" class="back-btn">← Back to Demo</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Find Your Dream Home with AI</h1>
+        <p>Discover properties tailored to your needs with our intelligent matching system</p>
+    </section>
+
+    <section class="search-section">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search by location, property type, or features...">
+            <select class="filter-select">
+                <option>Price Range</option>
+                <option>$0 - $500K</option>
+                <option>$500K - $1M</option>
+                <option>$1M - $2M</option>
+                <option>$2M+</option>
+            </select>
+            <button class="search-btn">Search Properties</button>
+        </div>
+    </section>
+
+    <section class="properties-section" id="properties">
+        <div class="properties-container">
+            <h2 class="section-title">Featured Properties</h2>
+            <div class="properties-grid">
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">For Sale</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$750,000</div>
+                        <div class="property-address">1234 Maple Street, Downtown</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 3 Beds</div>
+                            <div class="detail-item">🚿 2 Baths</div>
+                            <div class="detail-item">📐 2,150 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Beautiful modern home with open floor plan, updated kitchen, and spacious backyard. Perfect for families.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-primary">Schedule Tour</button>
+                            <button class="btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">For Sale</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$425,000</div>
+                        <div class="property-address">5678 Oak Avenue, Suburbia</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 2 Beds</div>
+                            <div class="detail-item">🚿 1 Bath</div>
+                            <div class="detail-item">📐 1,200 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Charming starter home with hardwood floors, cozy fireplace, and walking distance to schools.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-primary">Schedule Tour</button>
+                            <button class="btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">For Sale</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$1,200,000</div>
+                        <div class="property-address">9012 Pine Ridge, Luxury Hills</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 4 Beds</div>
+                            <div class="detail-item">🚿 3 Baths</div>
+                            <div class="detail-item">📐 3,500 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Stunning luxury home with panoramic views, gourmet kitchen, master suite, and 3-car garage.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-primary">Schedule Tour</button>
+                            <button class="btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status sold">Sold</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$595,000</div>
+                        <div class="property-address">3456 Elm Street, Midtown</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 3 Beds</div>
+                            <div class="detail-item">🚿 2 Baths</div>
+                            <div class="detail-item">📐 1,800 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Recently renovated townhouse with modern amenities and excellent location near transit.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-secondary" disabled>Sold</button>
+                            <button class="btn-secondary">Similar Properties</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">For Sale</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$320,000</div>
+                        <div class="property-address">7890 Cedar Lane, Riverside</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 2 Beds</div>
+                            <div class="detail-item">🚿 2 Baths</div>
+                            <div class="detail-item">📐 1,100 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Waterfront condo with stunning river views, modern finishes, and resort-style amenities.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-primary">Schedule Tour</button>
+                            <button class="btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-status">For Sale</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">$875,000</div>
+                        <div class="property-address">2468 Birch Court, Garden District</div>
+                        <div class="property-details">
+                            <div class="detail-item">🛏️ 4 Beds</div>
+                            <div class="detail-item">🚿 2.5 Baths</div>
+                            <div class="detail-item">📐 2,800 sqft</div>
+                        </div>
+                        <div class="property-description">
+                            Elegant colonial home with formal dining, home office, and beautifully landscaped gardens.
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn-primary">Schedule Tour</button>
+                            <button class="btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <button class="ai-toggle" onclick="toggleChat()">🤖</button>
+        <div class="ai-chat" id="aiChat">
+            <div class="chat-header">HomeIQ Assistant</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">Hi! I'm your AI real estate assistant. I can help you find properties, schedule tours, or answer questions about the market. What are you looking for today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Ask me anything..." onkeypress="handleChatInput(event)">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 HomeIQ by Omni Impact. Your AI-powered real estate partner.</p>
+    </footer>
+
+    <script>
+        function toggleChat() {
+            const chat = document.getElementById('aiChat');
+            chat.classList.toggle('active');
+        }
+
+        function handleChatInput(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const message = input.value.trim();
+                if (message) {
+                    addMessage(message, 'user');
+                    input.value = '';
+                    
+                    // Simulate AI response
+                    setTimeout(() => {
+                        const responses = [
+                            "I'd be happy to help you with that! Let me search our database for properties matching your criteria.",
+                            "Based on current market trends, I can recommend some great options in that price range.",
+                            "That's a great question! I can schedule a virtual tour or connect you with one of our top agents.",
+                            "I found several properties that match your preferences. Would you like me to send you more details?",
+                            "Our AI matching system suggests these properties would be perfect for your needs. Shall we schedule a viewing?"
+                        ];
+                        const response = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(response, 'ai');
+                    }, 1000);
+                }
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Property card interactions
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            if (!btn.disabled) {
+                btn.addEventListener('click', function() {
+                    if (this.textContent === 'Schedule Tour') {
+                        alert('Tour scheduled! You will receive a confirmation email shortly.');
+                    }
+                });
+            }
+        });
+
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            if (!btn.disabled && btn.textContent === 'Save') {
+                btn.addEventListener('click', function() {
+                    this.textContent = '❤️ Saved';
+                    this.style.color = 'var(--green-accent)';
+                });
+            }
+        });
+
+        // Search functionality
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const input = document.querySelector('.search-input');
+            if (input.value.trim()) {
+                alert(`Searching for properties matching: "${input.value}"`);
+            }
+        });
+    </script>
+</body>
+</html> 

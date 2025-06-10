@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DineIQ - Smart Restaurant Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --gray-light: #f5f5f7;
+            --gray-medium: #86868b;
+            --gray-dark: #1d1d1f;
+            --orange-accent: #ff6b35;
+            --red-accent: #ff3b30;
+            --green-accent: #34c759;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--primary-white);
+            color: var(--gray-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--orange-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .back-btn {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 50px 80px;
+            background: linear-gradient(135deg, var(--orange-accent) 0%, #e55527 100%);
+            color: var(--primary-white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s linear infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: clamp(18px, 2.5vw, 22px);
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            z-index: 10;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            z-index: 10;
+            position: relative;
+        }
+
+        .cta-btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .cta-primary {
+            background: var(--primary-white);
+            color: var(--orange-accent);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--primary-white);
+            border: 2px solid var(--primary-white);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Menu Section */
+        .menu-section {
+            padding: 80px 50px;
+            background: var(--primary-white);
+        }
+
+        .menu-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--gray-medium);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .menu-categories {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid var(--gray-light);
+            border-radius: 25px;
+            color: var(--gray-dark);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            border-color: var(--orange-accent);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .menu-item {
+            background: var(--primary-white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-light);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .item-info h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray-dark);
+        }
+
+        .item-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--orange-accent);
+        }
+
+        .item-description {
+            font-size: 16px;
+            color: var(--gray-medium);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--gray-medium);
+        }
+
+        .add-to-cart {
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: #e55527;
+            transform: scale(1.05);
+        }
+
+        /* Reservation Section */
+        .reservation-section {
+            padding: 80px 50px;
+            background: var(--gray-light);
+        }
+
+        .reservation-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .reservation-form {
+            background: var(--primary-white);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            padding: 16px 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--orange-accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .reserve-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .reserve-btn:hover {
+            background: #e55527;
+            transform: translateY(-2px);
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .ai-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .ai-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .ai-chat {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 400px;
+            background: var(--primary-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-chat.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .message.ai {
+            background: var(--gray-light);
+            margin-right: auto;
+        }
+
+        .message.user {
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            margin-left: auto;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 25px;
+            outline: none;
+        }
+
+        /* Cart */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--red-accent);
+            color: var(--primary-white);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 60px 50px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-categories {
+                gap: 15px;
+            }
+
+            .reservation-form {
+                padding: 30px 20px;
+            }
+
+            .ai-chat {
+                width: 300px;
+                height: 350px;
+                bottom: 70px;
+                right: -20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🍽️ DineIQ</div>
+            <ul class="nav-links">
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#reservations">Reservations</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li class="cart-icon">🛒 <span class="cart-count">0</span></li>
+            </ul>
+            <a href="demo.html" class="back-btn">← Back to Demo</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Welcome to DineIQ</h1>
+        <p>Experience fine dining with AI-powered service and personalized recommendations</p>
+        <div class="cta-buttons">
+            <a href="#menu" class="cta-btn cta-primary">View Menu</a>
+            <a href="#reservations" class="cta-btn cta-secondary">Make Reservation</a>
+        </div>
+    </section>
+
+    <section class="menu-section" id="menu">
+        <div class="menu-container">
+            <h2 class="section-title">Our Menu</h2>
+            <p class="section-subtitle">Curated dishes crafted with passion and precision</p>
+            
+            <div class="menu-categories">
+                <button class="category-btn active" onclick="showCategory('appetizers')">Appetizers</button>
+                <button class="category-btn" onclick="showCategory('mains')">Main Dishes</button>
+                <button class="category-btn" onclick="showCategory('desserts')">Desserts</button>
+                <button class="category-btn" onclick="showCategory('drinks')">Beverages</button>
+            </div>
+
+            <div class="menu-grid" id="menuGrid">
+                <!-- Appetizers -->
+                <div class="menu-item" data-category="appetizers">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Truffle Arancini</h3>
+                        </div>
+                        <div class="item-price">$16</div>
+                    </div>
+                    <div class="item-description">
+                        Crispy risotto balls filled with mushroom truffle, served with parmesan cream sauce
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.8 (124 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Truffle Arancini', 16)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="appetizers">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Seared Scallops</h3>
+                        </div>
+                        <div class="item-price">$22</div>
+                    </div>
+                    <div class="item-description">
+                        Pan-seared scallops with cauliflower purée and pancetta crisps
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.9 (89 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Seared Scallops', 22)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="appetizers">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Burrata & Prosciutto</h3>
+                        </div>
+                        <div class="item-price">$18</div>
+                    </div>
+                    <div class="item-description">
+                        Fresh burrata with San Daniele prosciutto, arugula, and aged balsamic
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.7 (156 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Burrata & Prosciutto', 18)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Main Dishes -->
+                <div class="menu-item" data-category="mains" style="display: none;">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Wagyu Beef Tenderloin</h3>
+                        </div>
+                        <div class="item-price">$65</div>
+                    </div>
+                    <div class="item-description">
+                        Premium wagyu beef with roasted vegetables and red wine reduction
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.9 (203 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Wagyu Beef Tenderloin', 65)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="mains" style="display: none;">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Lobster Thermidor</h3>
+                        </div>
+                        <div class="item-price">$48</div>
+                    </div>
+                    <div class="item-description">
+                        Fresh lobster tail with brandy cream sauce, gruyere cheese, and herbs
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.8 (167 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Lobster Thermidor', 48)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="desserts" style="display: none;">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Chocolate Soufflé</h3>
+                        </div>
+                        <div class="item-price">$14</div>
+                    </div>
+                    <div class="item-description">
+                        Warm chocolate soufflé with vanilla ice cream and berry compote
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.9 (234 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Chocolate Soufflé', 14)">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="menu-item" data-category="drinks" style="display: none;">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>Signature Cocktail</h3>
+                        </div>
+                        <div class="item-price">$16</div>
+                    </div>
+                    <div class="item-description">
+                        House special with premium spirits, fresh herbs, and seasonal fruits
+                    </div>
+                    <div class="item-meta">
+                        <div class="item-rating">⭐ 4.7 (98 reviews)</div>
+                        <button class="add-to-cart" onclick="addToCart('Signature Cocktail', 16)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reservation-section" id="reservations">
+        <div class="reservation-container">
+            <h2 class="section-title">Make a Reservation</h2>
+            <p class="section-subtitle">Reserve your table for an unforgettable dining experience</p>
+            
+            <div class="reservation-form">
+                <div class="form-row">
+                    <input type="text" class="form-input" placeholder="Full Name" required>
+                    <input type="email" class="form-input" placeholder="Email Address" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" class="form-input" placeholder="Phone Number" required>
+                    <select class="form-input" required>
+                        <option value="">Party Size</option>
+                        <option value="1">1 Person</option>
+                        <option value="2">2 People</option>
+                        <option value="3">3 People</option>
+                        <option value="4">4 People</option>
+                        <option value="5">5+ People</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="date" class="form-input" required>
+                    <input type="time" class="form-input" required>
+                </div>
+                <button class="reserve-btn" onclick="makeReservation()">Reserve Table</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <button class="ai-toggle" onclick="toggleChat()">🤖</button>
+        <div class="ai-chat" id="aiChat">
+            <div class="chat-header">DineIQ Assistant</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">Welcome to DineIQ! I'm here to help you with menu recommendations, reservations, dietary restrictions, or any questions about our restaurant. What can I help you with today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Ask about our menu, reservations..." onkeypress="handleChatInput(event)">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 DineIQ by Omni Impact. Elevating dining with intelligent service.</p>
+    </footer>
+
+    <script>
+        let cartCount = 0;
+        let cartItems = [];
+
+        function showCategory(category) {
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show/hide menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function addToCart(itemName, price) {
+            cartCount++;
+            cartItems.push({name: itemName, price: price});
+            document.querySelector('.cart-count').textContent = cartCount;
+            
+            // Simple notification
+            alert(`${itemName} added to cart! 🛒`);
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('aiChat');
+            chat.classList.toggle('active');
+        }
+
+        function handleChatInput(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const message = input.value.trim();
+                if (message) {
+                    addMessage(message, 'user');
+                    input.value = '';
+                    
+                    // Simulate AI response
+                    setTimeout(() => {
+                        const responses = [
+                            "I'd recommend our Wagyu Beef Tenderloin - it's our signature dish and gets amazing reviews!",
+                            "For dietary restrictions, I can help you find dishes that meet your needs. What should I look for?",
+                            "Our chef's special tonight features fresh seasonal ingredients. Would you like to hear about it?",
+                            "I can help you make a reservation right now! What date and time works best for you?",
+                            "Our wine sommelier recommends perfect pairings for each dish. Shall I suggest some options?",
+                            "The Truffle Arancini is very popular as a starter - it pairs beautifully with our signature cocktail!"
+                        ];
+                        const response = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(response, 'ai');
+                    }, 1000);
+                }
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function makeReservation() {
+            const inputs = document.querySelectorAll('.form-input');
+            let allFilled = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                }
+            });
+
+            if (allFilled) {
+                alert('Reservation confirmed! 🎉 You will receive a confirmation email shortly.');
+                inputs.forEach(input => input.value = '');
+            } else {
+                alert('Please fill in all fields to make your reservation.');
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
