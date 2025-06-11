@@ -645,42 +645,268 @@
     </footer>
 
     <script>
+        // Configuration - Update this URL when testing with localtunnel
+        const CHATBOT_CONFIG = {
+            // For local testing: 'http://localhost:5000'
+            // For localtunnel: 'https://your-subdomain.loca.lt'
+            apiUrl: 'http://localhost:5000', // Change this to your localtunnel URL
+            apiKey: 'jj7xn5YQjNU5ytXgy9FdSKpshG3GYInNrJQWSLq3mnc'
+        };
+
+        // Chat state management
+        let isTyping = false;
+        let chatSession = null;
+        let connectionRetryCount = 0;
+        const maxRetries = 3;
+
         function toggleChat() {
             const chat = document.getElementById('aiChat');
             chat.classList.toggle('active');
+            
+            // Initialize chat session if first time opening
+            if (chat.classList.contains('active') && !chatSession) {
+                initializeChat();
+            }
+        }
+
+        function initializeChat() {
+            chatSession = {
+                id: generateSessionId(),
+                startTime: new Date(),
+                messageCount: 0
+            };
+            
+            // Test connection on first open
+            testConnection();
+        }
+
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function testConnection() {
+            const originalMessages = document.getElementById('chatMessages').innerHTML;
+            
+            fetch(`${CHATBOT_CONFIG.apiUrl}/api/health`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Chatbot connection successful:', data);
+                    if (data.status !== 'healthy') {
+                        showWarningMessage('⚠️ Chatbot services are experiencing issues. Some features may be limited.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Connection test failed:', error);
+                    showErrorMessage('🔌 Connection issue detected. Trying to reconnect...');
+                    
+                    // Try reconnection with different URL if localhost fails
+                    if (CHATBOT_CONFIG.apiUrl.includes('localhost')) {
+                        showInfoMessage('💡 If testing with localtunnel, make sure to update the API URL in the page source.');
+                    }
+                });
         }
 
         function handleChatInput(event) {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !isTyping) {
                 const input = event.target;
                 const message = input.value.trim();
                 if (message) {
-                    addMessage(message, 'user');
+                    sendMessage(message);
                     input.value = '';
-                    
-                    // Simulate AI response
-                    setTimeout(() => {
-                        const responses = [
-                            "I'd be happy to help you with that! Let me search our database for properties matching your criteria.",
-                            "Based on current market trends, I can recommend some great options in that price range.",
-                            "That's a great question! I can schedule a virtual tour or connect you with one of our top agents.",
-                            "I found several properties that match your preferences. Would you like me to send you more details?",
-                            "Our AI matching system suggests these properties would be perfect for your needs. Shall we schedule a viewing?"
-                        ];
-                        const response = responses[Math.floor(Math.random() * responses.length)];
-                        addMessage(response, 'ai');
-                    }, 1000);
                 }
             }
         }
 
-        function addMessage(text, sender) {
+        async function sendMessage(message) {
+            if (isTyping) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            chatSession.messageCount++;
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                const response = await fetch(`${CHATBOT_CONFIG.apiUrl}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': CHATBOT_CONFIG.apiKey
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: chatSession.id
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Remove typing indicator
+                hideTypingIndicator();
+                
+                // Add AI response
+                addMessage(data.text, 'ai');
+                
+                // Display property images if provided
+                if (data.properties && data.properties.length > 0) {
+                    displayPropertyImages(data.properties);
+                }
+                
+                connectionRetryCount = 0; // Reset retry count on success
+
+            } catch (error) {
+                console.error('Chat error:', error);
+                hideTypingIndicator();
+                handleChatError(error, message);
+            }
+        }
+
+        function showTypingIndicator() {
+            isTyping = true;
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            isTyping = false;
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function handleChatError(error, originalMessage) {
+            let errorMessage = "I'm having trouble connecting right now. ";
+            
+            if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
+                if (CHATBOT_CONFIG.apiUrl.includes('loca.lt')) {
+                    errorMessage += "Please check that your localtunnel is still running and accessible.";
+                } else {
+                    errorMessage += "Please check that the backend server is running.";
+                }
+                
+                if (connectionRetryCount < maxRetries) {
+                    connectionRetryCount++;
+                    errorMessage += ` Attempting to reconnect (${connectionRetryCount}/${maxRetries})...`;
+                    
+                    // Retry after a delay
+                    setTimeout(() => {
+                        sendMessage(originalMessage);
+                    }, 2000);
+                    
+                    addMessage(errorMessage, 'ai', 'warning');
+                    return;
+                }
+            } else if (error.message.includes('401') || error.message.includes('403')) {
+                errorMessage = "Authentication failed. Please check the API key configuration.";
+            } else if (error.message.includes('429')) {
+                errorMessage = "Too many requests. Please wait a moment before trying again.";
+            } else if (error.message.includes('500')) {
+                errorMessage = "The server encountered an error. Please try again in a moment.";
+            }
+            
+            addMessage(errorMessage, 'ai', 'error');
+        }
+
+        function displayPropertyImages(properties) {
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            properties.forEach(property => {
+                if (property.photos && property.photos.length > 0) {
+                    const imageDiv = document.createElement('div');
+                    imageDiv.className = 'property-images';
+                    
+                    const gallery = document.createElement('div');
+                    gallery.className = 'property-gallery';
+                    
+                    property.photos.slice(0, 3).forEach((photo, index) => {
+                        const img = document.createElement('img');
+                        img.src = photo;
+                        img.className = 'property-photo';
+                        img.alt = `Property ${property.mlsId} - Image ${index + 1}`;
+                        img.onclick = () => openImageModal(photo);
+                        gallery.appendChild(img);
+                    });
+                    
+                    imageDiv.appendChild(gallery);
+                    messagesContainer.appendChild(imageDiv);
+                }
+            });
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function openImageModal(imageSrc) {
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay" onclick="closeImageModal(this)">
+                    <img src="${imageSrc}" class="modal-image" alt="Property Image">
+                    <button class="modal-close" onclick="closeImageModal(this)">×</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeImageModal(element) {
+            const modal = element.closest('.image-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function addMessage(text, sender, type = 'normal') {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
-            messageDiv.textContent = text;
+            
+            if (type === 'error') {
+                messageDiv.classList.add('error-message');
+            } else if (type === 'warning') {
+                messageDiv.classList.add('warning-message');
+            } else if (type === 'info') {
+                messageDiv.classList.add('info-message');
+            }
+            
+            // Format text with line breaks
+            messageDiv.innerHTML = formatMessageText(text);
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function formatMessageText(text) {
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        }
+
+        function showWarningMessage(message) {
+            addMessage(message, 'ai', 'warning');
+        }
+
+        function showErrorMessage(message) {
+            addMessage(message, 'ai', 'error');
+        }
+
+        function showInfoMessage(message) {
+            addMessage(message, 'ai', 'info');
         }
 
         // Property card interactions
@@ -710,6 +936,191 @@
                 alert(`Searching for properties matching: "${input.value}"`);
             }
         });
+
+        // Add styles for new chatbot features
+        const additionalStyles = `
+            <style>
+                .typing-indicator {
+                    opacity: 0.7;
+                }
+
+                .typing-dots {
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                }
+
+                .typing-dots span {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: var(--blue-accent);
+                    animation: typing 1.4s infinite;
+                }
+
+                .typing-dots span:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+
+                .typing-dots span:nth-child(3) {
+                    animation-delay: 0.4s;
+                }
+
+                @keyframes typing {
+                    0%, 100% { transform: translateY(0); opacity: 0.4; }
+                    50% { transform: translateY(-4px); opacity: 1; }
+                }
+
+                .error-message {
+                    background-color: #fee !important;
+                    border-left: 4px solid #dc3545;
+                    color: #721c24 !important;
+                }
+
+                .warning-message {
+                    background-color: #fff3cd !important;
+                    border-left: 4px solid #ffc107;
+                    color: #856404 !important;
+                }
+
+                .info-message {
+                    background-color: #d1ecf1 !important;
+                    border-left: 4px solid #17a2b8;
+                    color: #0c5460 !important;
+                }
+
+                .property-images {
+                    margin: 10px 0;
+                }
+
+                .property-gallery {
+                    display: flex;
+                    gap: 10px;
+                    overflow-x: auto;
+                    padding: 10px 0;
+                }
+
+                .property-photo {
+                    width: 120px;
+                    height: 80px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    flex-shrink: 0;
+                }
+
+                .property-photo:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                }
+
+                .image-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 2000;
+                }
+
+                .modal-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                }
+
+                .modal-image {
+                    max-width: 90%;
+                    max-height: 90%;
+                    object-fit: contain;
+                    border-radius: 12px;
+                    cursor: default;
+                }
+
+                .modal-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 24px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .modal-close:hover {
+                    background: white;
+                }
+
+                /* Enhance chat scrolling */
+                .chat-messages::-webkit-scrollbar {
+                    width: 6px;
+                }
+
+                .chat-messages::-webkit-scrollbar-track {
+                    background: var(--gray-light);
+                    border-radius: 3px;
+                }
+
+                .chat-messages::-webkit-scrollbar-thumb {
+                    background: var(--gray-medium);
+                    border-radius: 3px;
+                }
+
+                .chat-messages::-webkit-scrollbar-thumb:hover {
+                    background: var(--blue-accent);
+                }
+            </style>
+        `;
+
+        // Inject additional styles
+        document.head.insertAdjacentHTML('beforeend', additionalStyles);
+
+        // Connection status indicator
+        function updateConnectionStatus() {
+            const toggle = document.querySelector('.ai-toggle');
+            
+            fetch(`${CHATBOT_CONFIG.apiUrl}/api/health`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'healthy') {
+                        toggle.style.boxShadow = '0 10px 30px rgba(0, 122, 255, 0.3)';
+                        toggle.title = 'AI Assistant - Online';
+                    } else {
+                        toggle.style.boxShadow = '0 10px 30px rgba(255, 193, 7, 0.3)';
+                        toggle.title = 'AI Assistant - Limited Service';
+                    }
+                })
+                .catch(error => {
+                    toggle.style.boxShadow = '0 10px 30px rgba(220, 53, 69, 0.3)';
+                    toggle.title = 'AI Assistant - Connection Issues';
+                });
+        }
+
+        // Check connection status periodically
+        setInterval(updateConnectionStatus, 30000); // Every 30 seconds
+        
+        // Initial connection check
+        setTimeout(updateConnectionStatus, 1000);
+
+        // Add helpful console message for developers
+        console.log('🏠 HomeIQ Chatbot Integration Active');
+        console.log('📡 Current API URL:', CHATBOT_CONFIG.apiUrl);
+        console.log('🔧 To test with localtunnel, update CHATBOT_CONFIG.apiUrl in the page source');
     </script>
 </body>
 </html> 
+
