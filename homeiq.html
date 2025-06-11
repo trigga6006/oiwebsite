@@ -649,9 +649,12 @@
         const CHATBOT_CONFIG = {
             // For local testing: 'http://localhost:5000'
             // For localtunnel: 'https://your-subdomain.loca.lt'
-            apiUrl: 'http://localhost:5000', // Change this to your localtunnel URL
+            apiUrl: 'https://estatechatbot.loca.lt', // Updated to use your tunnel URL - VERSION 2
             apiKey: 'jj7xn5YQjNU5ytXgy9FdSKpshG3GYInNrJQWSLq3mnc'
         };
+        
+        // Debug: Log the current API URL to console
+        console.log('🔧 Chatbot API URL:', CHATBOT_CONFIG.apiUrl);
 
         // Chat state management
         let isTyping = false;
