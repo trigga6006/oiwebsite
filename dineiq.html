@@ -438,14 +438,49 @@
         .chat-input {
             padding: 20px;
             border-top: 1px solid var(--gray-light);
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .chat-input input {
-            width: 100%;
-            padding: 12px;
+            flex: 1;
+            padding: 12px 16px;
             border: 1px solid var(--gray-light);
             border-radius: 25px;
             outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--orange-accent);
+        }
+
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--orange-accent);
+            color: var(--primary-white);
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-send-btn:hover {
+            background: #e55527;
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--gray-medium);
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Cart */
@@ -717,7 +752,8 @@
                 <div class="message ai">Welcome to DineIQ! I'm here to help you with menu recommendations, reservations, dietary restrictions, or any questions about our restaurant. What can I help you with today?</div>
             </div>
             <div class="chat-input">
-                <input type="text" placeholder="Ask about our menu, reservations..." onkeypress="handleChatInput(event)">
+                <input type="text" placeholder="Ask about our menu, reservations..." onkeypress="handleChatInput(event)" id="chatInput">
+                <button class="chat-send-btn" onclick="sendChatMessage()" id="sendBtn">▶</button>
             </div>
         </div>
     </div>
@@ -761,26 +797,30 @@
 
         function handleChatInput(event) {
             if (event.key === 'Enter') {
-                const input = event.target;
-                const message = input.value.trim();
-                if (message) {
-                    addMessage(message, 'user');
-                    input.value = '';
-                    
-                    // Simulate AI response
-                    setTimeout(() => {
-                        const responses = [
-                            "I'd recommend our Wagyu Beef Tenderloin - it's our signature dish and gets amazing reviews!",
-                            "For dietary restrictions, I can help you find dishes that meet your needs. What should I look for?",
-                            "Our chef's special tonight features fresh seasonal ingredients. Would you like to hear about it?",
-                            "I can help you make a reservation right now! What date and time works best for you?",
-                            "Our wine sommelier recommends perfect pairings for each dish. Shall I suggest some options?",
-                            "The Truffle Arancini is very popular as a starter - it pairs beautifully with our signature cocktail!"
-                        ];
-                        const response = responses[Math.floor(Math.random() * responses.length)];
-                        addMessage(response, 'ai');
-                    }, 1000);
-                }
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const responses = [
+                        "I'd recommend our Wagyu Beef Tenderloin - it's our signature dish and gets amazing reviews!",
+                        "For dietary restrictions, I can help you find dishes that meet your needs. What should I look for?",
+                        "Our chef's special tonight features fresh seasonal ingredients. Would you like to hear about it?",
+                        "I can help you make a reservation right now! What date and time works best for you?",
+                        "Our wine sommelier recommends perfect pairings for each dish. Shall I suggest some options?",
+                        "The Truffle Arancini is very popular as a starter - it pairs beautifully with our signature cocktail!"
+                    ];
+                    const response = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(response, 'ai');
+                }, 1000);
             }
         }
 

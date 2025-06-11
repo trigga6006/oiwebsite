@@ -402,14 +402,49 @@
         .chat-input {
             padding: 20px;
             border-top: 1px solid var(--gray-light);
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .chat-input input {
-            width: 100%;
-            padding: 12px;
+            flex: 1;
+            padding: 12px 16px;
             border: 1px solid var(--gray-light);
             border-radius: 25px;
             outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--blue-accent);
+        }
+
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-send-btn:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--gray-medium);
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Footer */
@@ -635,7 +670,8 @@
                 <div class="message ai">Hi! I'm your AI real estate assistant. I can help you find properties, schedule tours, or answer questions about the market. What are you looking for today?</div>
             </div>
             <div class="chat-input">
-                <input type="text" placeholder="Ask me anything..." onkeypress="handleChatInput(event)">
+                <input type="text" placeholder="Ask me anything..." onkeypress="handleChatInput(event)" id="chatInput">
+                <button class="chat-send-btn" onclick="sendChatMessage()" id="sendBtn">▶</button>
             </div>
         </div>
     </div>
@@ -709,12 +745,18 @@
 
         function handleChatInput(event) {
             if (event.key === 'Enter' && !isTyping) {
-                const input = event.target;
-                const message = input.value.trim();
-                if (message) {
-                    sendMessage(message);
-                    input.value = '';
-                }
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            if (isTyping) return;
+            
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                sendMessage(message);
+                input.value = '';
             }
         }
 
