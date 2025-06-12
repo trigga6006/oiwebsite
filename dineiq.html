@@ -406,14 +406,14 @@
 
         .ai-chat.fullscreen {
             position: fixed;
+            top: 90px;
             bottom: 100px;
             right: 30px;
             width: 40vw;
-            height: 40vh;
+            height: calc(100vh - 190px);
             min-width: 400px;
             min-height: 300px;
             max-width: 600px;
-            max-height: 500px;
             z-index: 10000;
             border-radius: 20px;
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
@@ -601,14 +601,14 @@
             }
 
             .ai-chat.fullscreen {
+                top: 70px;
                 bottom: 80px;
                 right: 10px;
                 width: 85vw;
-                height: 50vh;
+                height: calc(100vh - 150px);
                 min-width: 280px;
-                min-height: 350px;
+                min-height: 300px;
                 max-width: 90vw;
-                max-height: 60vh;
             }
         }
     </style>
