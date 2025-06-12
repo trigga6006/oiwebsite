@@ -58,7 +58,7 @@
         .login-title {
             font-size: 28px;
             font-weight: 700;
-            color: var(--blue-accent);
+            color: var(--primary-black);
             margin-bottom: 10px;
             letter-spacing: -0.5px;
         }
@@ -86,13 +86,13 @@
 
         .login-input:focus {
             outline: none;
-            border-color: var(--blue-accent);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            border-color: var(--primary-black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
         }
 
         .login-btn {
             padding: 16px 30px;
-            background: var(--blue-accent);
+            background: var(--primary-black);
             color: var(--primary-white);
             border: none;
             border-radius: 12px;
@@ -103,12 +103,12 @@
         }
 
         .login-btn:hover {
-            background: #0056b3;
+            background: var(--gray-dark);
             transform: translateY(-2px);
         }
 
         .login-error {
-            color: var(--red-accent);
+            color: var(--gray-dark);
             font-size: 14px;
             margin-top: 10px;
         }
@@ -229,7 +229,7 @@
         .metric-value {
             font-size: 42px;
             font-weight: 700;
-            color: var(--blue-accent);
+            color: var(--primary-black);
             margin-bottom: 5px;
             letter-spacing: -1px;
         }
@@ -240,11 +240,11 @@
         }
 
         .metric-change.positive {
-            color: var(--green-accent);
+            color: var(--primary-black);
         }
 
         .metric-change.negative {
-            color: var(--red-accent);
+            color: var(--gray-dark);
         }
 
         /* Chart Containers */
@@ -338,13 +338,13 @@
         }
 
         .status-success {
-            background-color: rgba(52, 199, 89, 0.1);
-            color: var(--green-accent);
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--primary-black);
         }
 
         .status-error {
-            background-color: rgba(255, 59, 48, 0.1);
-            color: var(--red-accent);
+            background-color: rgba(29, 29, 31, 0.1);
+            color: var(--gray-dark);
         }
 
         /* Footer */
@@ -367,8 +367,8 @@
         }
 
         .error-message {
-            background-color: rgba(255, 59, 48, 0.1);
-            color: var(--red-accent);
+            background-color: rgba(29, 29, 31, 0.1);
+            color: var(--gray-dark);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
@@ -613,12 +613,12 @@
                     datasets: [{
                         label: 'Daily Conversations',
                         data: [],
-                        borderColor: '#007aff',
-                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        borderColor: '#000000',
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
                         tension: 0.4,
                         fill: true,
                         borderWidth: 3,
-                        pointBackgroundColor: '#007aff',
+                        pointBackgroundColor: '#000000',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2
                     }]
@@ -663,7 +663,7 @@
                     datasets: [{
                         label: 'Response Time (seconds)',
                         data: [],
-                        backgroundColor: '#34c759',
+                        backgroundColor: '#1d1d1f',
                         borderRadius: 8,
                         borderSkipped: false
                     }]
@@ -707,12 +707,12 @@
                     datasets: [{
                         data: [],
                         backgroundColor: [
-                            '#007aff',
-                            '#34c759',
-                            '#ff9500',
-                            '#ff3b30',
-                            '#af52de',
-                            '#00c7be'
+                            '#000000',
+                            '#1d1d1f',
+                            '#3a3a3c',
+                            '#48484a',
+                            '#636366',
+                            '#86868b'
                         ],
                         borderWidth: 0
                     }]
