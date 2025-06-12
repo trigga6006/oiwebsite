@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeIQ Analytics - Real Estate Chatbot Dashboard</title>
+    <title>IQ Analytics - Real Estate Chatbot Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -181,129 +181,11 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            background: var(--primary-white);
-            color: var(--gray-dark);
-            text-align: center;
-        }
 
-        .hero-content {
-            z-index: 10;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-size: clamp(48px, 8vw, 80px);
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -2px;
-            margin-bottom: 20px;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        .hero p {
-            font-size: clamp(20px, 3vw, 24px);
-            color: var(--gray-medium);
-            margin-bottom: 40px;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s ease 0.2s forwards;
-        }
-
-        /* Planetary Curve Animation */
-        .planetary-curve {
-            position: absolute;
-            bottom: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .planet-edge {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200%;
-            height: 80%;
-            border-radius: 50%;
-            background: radial-gradient(ellipse at center bottom, 
-                rgba(0, 0, 0, 0.03) 0%,
-                rgba(0, 0, 0, 0.02) 30%,
-                transparent 70%);
-            filter: blur(1px);
-        }
-
-        .light-streak {
-            position: absolute;
-            bottom: 20%;
-            left: -10%;
-            width: 120px;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(0, 0, 0, 0.1) 20%,
-                rgba(0, 0, 0, 0.2) 50%,
-                rgba(0, 0, 0, 0.1) 80%,
-                transparent 100%);
-            filter: blur(2px);
-            animation: glideAcrossPlanet 15s ease-in-out infinite;
-        }
-
-        /* Animated Background */
-        .animated-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .floating-element {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 0, 0, 0.02) 0%, transparent 70%);
-            animation: float 25s infinite ease-in-out;
-        }
-
-        .floating-element:nth-child(1) {
-            top: -150px;
-            left: -150px;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            top: 50%;
-            right: -150px;
-            animation-delay: 8s;
-        }
-
-        .floating-element:nth-child(3) {
-            bottom: -150px;
-            left: 30%;
-            animation-delay: 16s;
-        }
 
         /* Main Content */
         .main-content {
-            padding: 120px 50px;
+            padding: 120px 50px 80px;
             background: var(--gray-light);
             position: relative;
         }
@@ -497,49 +379,7 @@
             display: none;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.05);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.95);
-            }
-        }
-
-        @keyframes glideAcrossPlanet {
-            0% {
-                left: -10%;
-                opacity: 0;
-                transform: translateY(0) scale(0.8);
-            }
-            10% {
-                opacity: 1;
-                transform: translateY(-5px) scale(1);
-            }
-            50% {
-                transform: translateY(-10px) scale(1.1);
-            }
-            90% {
-                opacity: 1;
-                transform: translateY(-5px) scale(1);
-            }
-            100% {
-                left: 110%;
-                opacity: 0;
-                transform: translateY(0) scale(0.8);
-            }
-        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -558,15 +398,6 @@
             .metrics-grid {
                 grid-template-columns: 1fr;
             }
-
-            .planetary-curve {
-                bottom: -70%;
-            }
-
-            .light-streak {
-                width: 80px;
-                height: 3px;
-            }
         }
     </style>
 </head>
@@ -574,7 +405,7 @@
     <!-- Login Overlay -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
-            <h2 class="login-title">HomeIQ Analytics</h2>
+            <h2 class="login-title">IQ Analytics</h2>
             <p class="login-subtitle">Access your chatbot dashboard</p>
             <form class="login-form" id="loginForm">
                 <input type="text" class="login-input" id="username" placeholder="Username" required>
@@ -588,7 +419,7 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <div class="logo">HomeIQ Analytics</div>
+            <div class="logo">IQ Analytics</div>
             <ul class="nav-links">
                 <li><a href="homeiq.html">Back to HomeIQ</a></li>
                 <li><a href="#overview">Overview</a></li>
@@ -599,22 +430,7 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="animated-bg">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-        </div>
-        <div class="planetary-curve">
-            <div class="planet-edge"></div>
-            <div class="light-streak"></div>
-        </div>
-        <div class="hero-content">
-            <h1>Analytics Dashboard</h1>
-            <p>Comprehensive insights into your AI-powered customer interactions and property engagement metrics</p>
-        </div>
-    </section>
+
 
     <!-- Main Content -->
     <div class="main-content">
