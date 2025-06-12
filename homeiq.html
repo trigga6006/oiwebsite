@@ -368,11 +368,52 @@
             display: flex;
         }
 
+        .ai-chat.fullscreen {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            z-index: 10000;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+        }
+
         .chat-header {
             padding: 20px;
             background: var(--blue-accent);
             color: var(--primary-white);
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--primary-white);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .chat-control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
         .chat-messages {
@@ -485,6 +526,15 @@
                 height: 350px;
                 bottom: 70px;
                 right: -20px;
+            }
+
+            .ai-chat.fullscreen {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                width: calc(100% - 20px);
+                height: calc(100% - 20px);
             }
         }
     </style>
@@ -665,7 +715,12 @@
     <div class="ai-assistant">
         <button class="ai-toggle" onclick="toggleChat()">🤖</button>
         <div class="ai-chat" id="aiChat">
-            <div class="chat-header">HomeIQ Assistant</div>
+            <div class="chat-header">
+                <span>HomeIQ Assistant</span>
+                <div class="chat-header-controls">
+                    <button class="chat-control-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen" id="fullscreenBtn">⛶</button>
+                </div>
+            </div>
             <div class="chat-messages" id="chatMessages">
                 <div class="message ai">Hi! I'm your AI real estate assistant. I can help you find properties, schedule tours, or answer questions about the market. What are you looking for today?</div>
             </div>
@@ -703,6 +758,23 @@
             // Initialize chat session if first time opening
             if (chat.classList.contains('active') && !chatSession) {
                 initializeChat();
+            }
+        }
+
+        function toggleFullscreen() {
+            const chat = document.getElementById('aiChat');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            if (chat.classList.contains('fullscreen')) {
+                // Exit fullscreen
+                chat.classList.remove('fullscreen');
+                fullscreenBtn.innerHTML = '⛶';
+                fullscreenBtn.title = 'Toggle Fullscreen';
+            } else {
+                // Enter fullscreen
+                chat.classList.add('fullscreen');
+                fullscreenBtn.innerHTML = '🗗';
+                fullscreenBtn.title = 'Exit Fullscreen';
             }
         }
 
