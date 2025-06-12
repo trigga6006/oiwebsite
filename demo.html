@@ -128,10 +128,10 @@
         }
 
         .demo-container {
-            max-width: 1000px;
+            max-width: 500px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            display: flex;
+            justify-content: center;
             gap: 60px;
         }
 
@@ -323,7 +323,8 @@
             }
             
             .demo-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
                 gap: 40px;
             }
 
@@ -353,8 +354,8 @@
     </nav>
 
     <section class="demo-hero">
-        <h1>Experience Our AI Solutions</h1>
-        <p>Explore interactive demos of HomeIQ and DineIQ to see how our AI can transform your business</p>
+        <h1>Experience Our AI Solution</h1>
+        <p>Explore an interactive demo of HomeIQ to see how our AI can transform your real estate business</p>
     </section>
 
     <section class="demo-section">
@@ -367,13 +368,6 @@
                 <div class="demo-icon">🏠</div>
                 <h2>HomeIQ</h2>
                 <p>Experience our AI-powered real estate platform with intelligent property matching, virtual tours, and automated client assistance.</p>
-                <span class="demo-cta">Try Demo</span>
-            </a>
-
-            <a href="dineiq.html" class="demo-box">
-                <div class="demo-icon">🍽️</div>
-                <h2>DineIQ</h2>
-                <p>Discover how our restaurant AI handles orders, reservations, and customer service with natural conversation and smart automation.</p>
                 <span class="demo-cta">Try Demo</span>
             </a>
         </div>

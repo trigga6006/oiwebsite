@@ -275,8 +275,8 @@
         }
 
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            display: flex;
+            justify-content: center;
             gap: 40px;
             max-width: 1200px;
             margin: 0 auto;
@@ -499,7 +499,8 @@
             }
             
             .products-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
             }
             
             .about-content {
@@ -557,11 +558,6 @@
             <h2>Our Products</h2>
         </div>
         <div class="products-grid">
-            <div class="product-card">
-                <div class="product-icon">🍽️</div>
-                <h3>DineIQ - Restaurant Assistant</h3>
-                <p>Empower your restaurant with an intelligent chatbot that handles orders, reservations, and customer inquiries seamlessly. Enhance the dining experience from first click to last bite.</p>
-            </div>
             <div class="product-card">
                 <div class="product-icon">🏠</div>
                 <h3>HomeIQ - Real Estate Concierge</h3>
