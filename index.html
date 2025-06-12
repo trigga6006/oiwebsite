@@ -76,6 +76,22 @@
             opacity: 0.6;
         }
 
+        .login-btn {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         /* Hero Section */
         .hero {
             height: 100vh;
@@ -497,6 +513,12 @@
             .nav-links {
                 gap: 20px;
             }
+
+            .login-btn {
+                margin-left: 15px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
             
             .products-grid {
                 flex-direction: column;
@@ -533,6 +555,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
+            <a href="analytics-dashboard.html" class="login-btn">Login</a>
         </div>
     </nav>
 

@@ -76,6 +76,22 @@
             opacity: 0.6;
         }
 
+        .login-btn {
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .back-btn {
             background: var(--primary-black);
             color: var(--primary-white);
@@ -552,8 +568,8 @@
                 <li><a href="#agents">Agents</a></li>
                 <li><a href="#mortgage">Mortgage</a></li>
                 <li><a href="#sell">Sell</a></li>
-                <li><a href="analytics-dashboard.html" style="color: var(--gray-medium); font-size: 14px;">Admin</a></li>
             </ul>
+            <a href="analytics-dashboard.html" class="login-btn">Login</a>
             <a href="demo.html" class="back-btn">← Back to Demo</a>
         </div>
     </nav>
