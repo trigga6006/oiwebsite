@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeIQ Analytics - Real Estate Chatbot Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --gray-light: #f5f5f7;
+            --gray-medium: #86868b;
+            --gray-dark: #1d1d1f;
+            --blue-accent: #007aff;
+            --green-accent: #34c759;
+            --red-accent: #ff3b30;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--primary-white);
+            color: var(--gray-dark);
+            overflow-x: hidden;
+        }
+
+        /* Login Overlay */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-card {
+            background: var(--primary-white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--blue-accent);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            color: var(--gray-medium);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            padding: 16px 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--primary-white);
+            transition: all 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--blue-accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .login-btn {
+            padding: 16px 30px;
+            background: var(--blue-accent);
+            color: var(--primary-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .login-error {
+            color: var(--red-accent);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--blue-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .logout-btn {
+            background: var(--red-accent);
+            color: var(--primary-white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 59, 48, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 50px 80px;
+            background: linear-gradient(135deg, var(--blue-accent) 0%, #0056b3 100%);
+            color: var(--primary-white);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: clamp(18px, 2.5vw, 22px);
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 80px 50px;
+            background: var(--gray-light);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .metric-card {
+            background: var(--primary-white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--blue-accent);
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .metric-change.positive {
+            color: var(--green-accent);
+        }
+
+        .metric-change.negative {
+            color: var(--red-accent);
+        }
+
+        /* Chart Containers */
+        .chart-section {
+            margin-bottom: 60px;
+        }
+
+        .chart-container {
+            background: var(--primary-white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-dark);
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .chart-wrapper.small {
+            height: 300px;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--primary-white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px;
+            border-bottom: 2px solid var(--gray-light);
+            font-weight: 700;
+            color: var(--gray-dark);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background-color: var(--gray-light);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-success {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: var(--green-accent);
+        }
+
+        .status-error {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--red-accent);
+        }
+
+        /* Footer */
+        .refresh-info {
+            text-align: center;
+            color: var(--gray-medium);
+            font-size: 16px;
+            margin-top: 40px;
+            padding: 30px;
+            background: var(--primary-white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-medium);
+            font-size: 18px;
+        }
+
+        .error-message {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--red-accent);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 25px;
+            }
+            
+            .hero {
+                padding: 100px 25px 60px;
+            }
+            
+            .main-content {
+                padding: 60px 25px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <h2 class="login-title">HomeIQ Analytics</h2>
+            <p class="login-subtitle">Access your chatbot dashboard</p>
+            <form class="login-form" id="loginForm">
+                <input type="text" class="login-input" id="username" placeholder="Username" required>
+                <input type="password" class="login-input" id="password" placeholder="Password" required>
+                <button type="submit" class="login-btn">Access Dashboard</button>
+                <div class="login-error" id="loginError"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">HomeIQ Analytics</div>
+            <ul class="nav-links">
+                <li><a href="homeiq.html">Back to HomeIQ</a></li>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#conversations">Conversations</a></li>
+                <li><a href="#properties">Properties</a></li>
+            </ul>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Real Estate Chatbot Analytics</h1>
+        <p>Comprehensive insights into your AI-powered customer interactions and property engagement metrics</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Key Metrics -->
+            <div class="metrics-grid" id="metricsGrid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Conversations</div>
+                    <div class="metric-value" id="totalConversations">-</div>
+                    <div class="metric-change positive" id="conversationsChange">Loading...</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Average Response Time</div>
+                    <div class="metric-value" id="avgResponseTime">-</div>
+                    <div class="metric-change" id="responseTimeChange">Loading...</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">System Uptime</div>
+                    <div class="metric-value" id="uptime">-</div>
+                    <div class="metric-change positive" id="uptimeChange">Online</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Properties Viewed</div>
+                    <div class="metric-value" id="propertiesViewed">-</div>
+                    <div class="metric-change positive" id="propertiesViewedChange">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Conversations Chart -->
+            <div class="chart-section" id="overview">
+                <div class="chart-container">
+                    <h2 class="chart-title">Conversation Activity (Last 7 Days)</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="conversationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-column">
+                <!-- Response Time Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Response Performance</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="responseTimeChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Common Questions Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Question Categories</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="questionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Viewed Properties -->
+            <div class="chart-section" id="properties">
+                <div class="table-container">
+                    <h2 class="chart-title">Most Popular Properties</h2>
+                    <table id="propertiesTable">
+                        <thead>
+                            <tr>
+                                <th>Property Address</th>
+                                <th>Total Views</th>
+                                <th>Listed Price</th>
+                                <th>Engagement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" class="loading">Loading property data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Conversations -->
+            <div class="chart-section" id="conversations">
+                <div class="table-container">
+                    <h2 class="chart-title">Recent Customer Interactions</h2>
+                    <table id="conversationsTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Customer Message</th>
+                                <th>Response Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" class="loading">Loading conversation data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="refresh-info">
+                Dashboard updates automatically every 30 seconds<br>
+                Last updated: <span id="lastUpdated">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hard-coded credentials (for demo purposes)
+        const VALID_CREDENTIALS = {
+            'admin': 'homeiq2024',
+            'manager': 'analytics123',
+            'demo': 'demo123'
+        };
+
+        // Global chart instances
+        let conversationsChart, responseTimeChart, questionsChart;
+        let isAuthenticated = false;
+
+        // Authentication functions
+        function checkAuth() {
+            const authData = localStorage.getItem('homeiq_auth');
+            if (authData) {
+                try {
+                    const parsed = JSON.parse(authData);
+                    if (parsed.expires > Date.now()) {
+                        isAuthenticated = true;
+                        document.getElementById('loginOverlay').classList.add('hidden');
+                        return true;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('homeiq_auth');
+                }
+            }
+            return false;
+        }
+
+        function login(username, password) {
+            if (VALID_CREDENTIALS[username] === password) {
+                const authData = {
+                    username: username,
+                    expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+                };
+                localStorage.setItem('homeiq_auth', JSON.stringify(authData));
+                isAuthenticated = true;
+                document.getElementById('loginOverlay').classList.add('hidden');
+                initDashboard();
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            localStorage.removeItem('homeiq_auth');
+            isAuthenticated = false;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginError').textContent = '';
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (login(username, password)) {
+                document.getElementById('loginError').textContent = '';
+            } else {
+                document.getElementById('loginError').textContent = 'Invalid credentials. Try admin/homeiq2024';
+            }
+        });
+
+        // Initialize charts
+        function initCharts() {
+            // Conversations Over Time Chart
+            const conversationsCtx = document.getElementById('conversationsChart').getContext('2d');
+            conversationsChart = new Chart(conversationsCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Daily Conversations',
+                        data: [],
+                        borderColor: '#007aff',
+                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#007aff',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: '#86868b'
+                            },
+                            grid: {
+                                color: '#f5f5f7'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#86868b'
+                            },
+                            grid: {
+                                color: '#f5f5f7'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Response Time Chart
+            const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+            responseTimeChart = new Chart(responseTimeCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Response Time (seconds)',
+                        data: [],
+                        backgroundColor: '#34c759',
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#86868b'
+                            },
+                            grid: {
+                                color: '#f5f5f7'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#86868b'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Common Questions Chart
+            const questionsCtx = document.getElementById('questionsChart').getContext('2d');
+            questionsChart = new Chart(questionsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#007aff',
+                            '#34c759',
+                            '#ff9500',
+                            '#ff3b30',
+                            '#af52de',
+                            '#00c7be'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                color: '#1d1d1f'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update metrics
+        function updateMetrics(data) {
+            // Update metric cards
+            document.getElementById('totalConversations').textContent = data.total_conversations || '0';
+            document.getElementById('avgResponseTime').textContent = 
+                data.avg_response_time ? data.avg_response_time.toFixed(2) + 's' : '0s';
+            document.getElementById('uptime').textContent = 
+                data.uptime_hours ? data.uptime_hours.toFixed(1) + 'h' : '0h';
+            document.getElementById('propertiesViewed').textContent = data.properties_viewed || '0';
+            
+            // Update change indicators
+            const changeText = data.conversations_change ? 
+                `${data.conversations_change > 0 ? '+' : ''}${data.conversations_change} today` : 
+                'No data available';
+            document.getElementById('conversationsChange').textContent = changeText;
+            
+            // Update conversations chart
+            if (data.conversations_by_day) {
+                conversationsChart.data.labels = Object.keys(data.conversations_by_day);
+                conversationsChart.data.datasets[0].data = Object.values(data.conversations_by_day);
+                conversationsChart.update('none');
+            }
+            
+            // Update response time chart
+            if (data.response_times_by_day) {
+                responseTimeChart.data.labels = Object.keys(data.response_times_by_day);
+                responseTimeChart.data.datasets[0].data = Object.values(data.response_times_by_day);
+                responseTimeChart.update('none');
+            }
+            
+            // Update common questions chart
+            if (data.common_questions) {
+                questionsChart.data.labels = Object.keys(data.common_questions);
+                questionsChart.data.datasets[0].data = Object.values(data.common_questions);
+                questionsChart.update('none');
+            }
+            
+            // Update most viewed properties table
+            if (data.most_viewed_properties && data.most_viewed_properties.length > 0) {
+                const tbody = document.querySelector('#propertiesTable tbody');
+                tbody.innerHTML = data.most_viewed_properties.map(prop => `
+                    <tr>
+                        <td>${prop.address}</td>
+                        <td>${prop.views}</td>
+                        <td>$${prop.price.toLocaleString()}</td>
+                        <td><span class="status-badge status-success">Active</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                const tbody = document.querySelector('#propertiesTable tbody');
+                tbody.innerHTML = '<tr><td colspan="4" class="loading">No property views yet</td></tr>';
+            }
+            
+            // Update recent conversations table
+            if (data.recent_conversations && data.recent_conversations.length > 0) {
+                const tbody = document.querySelector('#conversationsTable tbody');
+                tbody.innerHTML = data.recent_conversations.map(conv => `
+                    <tr>
+                        <td>${new Date(conv.timestamp).toLocaleString()}</td>
+                        <td>${conv.message.substring(0, 60)}${conv.message.length > 60 ? '...' : ''}</td>
+                        <td>${conv.response_time ? conv.response_time.toFixed(2) + 's' : '-'}</td>
+                        <td><span class="status-badge status-${conv.status}">${conv.status}</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                const tbody = document.querySelector('#conversationsTable tbody');
+                tbody.innerHTML = '<tr><td colspan="4" class="loading">No conversations yet</td></tr>';
+            }
+            
+            // Update last updated time
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        }
+
+        // Production API Configuration
+        const ANALYTICS_CONFIG = {
+            // Use your production server URL
+            apiUrl: 'https://homeiq-608r.onrender.com',
+            credentials: btoa('admin:admin123'), // Base64 encoded admin:admin123
+            fallbackMode: true // Will use mock data if real API fails
+        };
+
+        // Real API fetch function
+        async function fetchAnalytics() {
+            try {
+                const response = await fetch(`${ANALYTICS_CONFIG.apiUrl}/admin/analytics/data`, {
+                    headers: {
+                        'Authorization': `Basic ${ANALYTICS_CONFIG.credentials}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                updateMetrics(data);
+                
+                // Clear any error messages on success
+                const existingError = document.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+            } catch (error) {
+                console.error('Error fetching analytics:', error);
+                
+                if (ANALYTICS_CONFIG.fallbackMode) {
+                    console.log('Using fallback mock data');
+                    fetchMockAnalytics();
+                    
+                    // Show warning but don't break the dashboard
+                    showAnalyticsWarning('Live data unavailable. Showing demo data.');
+                } else {
+                    showAnalyticsError('Failed to load analytics data. Please refresh the page.');
+                }
+            }
+        }
+
+        // Fallback mock data function
+        function fetchMockAnalytics() {
+            const mockData = {
+                total_conversations: Math.floor(Math.random() * 500) + 100,
+                avg_response_time: Math.random() * 3 + 1,
+                uptime_hours: Math.floor(Math.random() * 100) + 50,
+                properties_viewed: Math.floor(Math.random() * 200) + 50,
+                conversations_change: Math.floor(Math.random() * 20) - 5,
+                conversations_by_day: {
+                    '12/15': Math.floor(Math.random() * 30) + 10,
+                    '12/16': Math.floor(Math.random() * 35) + 15,
+                    '12/17': Math.floor(Math.random() * 40) + 20,
+                    '12/18': Math.floor(Math.random() * 45) + 25,
+                    '12/19': Math.floor(Math.random() * 50) + 30,
+                    '12/20': Math.floor(Math.random() * 55) + 35,
+                    '12/21': Math.floor(Math.random() * 60) + 40
+                },
+                response_times_by_day: {
+                    '12/15': Math.random() * 2 + 1,
+                    '12/16': Math.random() * 2 + 1,
+                    '12/17': Math.random() * 2 + 1,
+                    '12/18': Math.random() * 2 + 1,
+                    '12/19': Math.random() * 2 + 1,
+                    '12/20': Math.random() * 2 + 1,
+                    '12/21': Math.random() * 2 + 1
+                },
+                common_questions: {
+                    'Pricing': Math.floor(Math.random() * 30) + 20,
+                    'Property Features': Math.floor(Math.random() * 25) + 15,
+                    'Location': Math.floor(Math.random() * 20) + 10,
+                    'Tours/Visits': Math.floor(Math.random() * 15) + 8,
+                    'Availability': Math.floor(Math.random() * 12) + 5,
+                    'General Inquiries': Math.floor(Math.random() * 10) + 3
+                },
+                most_viewed_properties: [
+                    { address: '123 Elm Street, Beverly Hills, CA', views: 45, price: 750000 },
+                    { address: '456 Oak Avenue, Malibu, CA', views: 38, price: 1200000 },
+                    { address: '789 Pine Road, Santa Monica, CA', views: 32, price: 950000 },
+                    { address: '321 Maple Drive, West Hollywood, CA', views: 28, price: 680000 },
+                    { address: '654 Cedar Lane, Venice, CA', views: 24, price: 580000 }
+                ],
+                recent_conversations: [
+                    {
+                        timestamp: new Date(Date.now() - 30000).toISOString(),
+                        message: 'What properties do you have under $500k?',
+                        response_time: 2.3,
+                        status: 'success'
+                    },
+                    {
+                        timestamp: new Date(Date.now() - 120000).toISOString(),
+                        message: 'Show me 3 bedroom homes in Beverly Hills',
+                        response_time: 1.8,
+                        status: 'success'
+                    },
+                    {
+                        timestamp: new Date(Date.now() - 300000).toISOString(),
+                        message: 'Can I schedule a tour for tomorrow?',
+                        response_time: 2.1,
+                        status: 'success'
+                    }
+                ]
+            };
+
+            updateMetrics(mockData);
+        }
+
+        function showAnalyticsWarning(message) {
+            const container = document.querySelector('.container');
+            let warningDiv = container.querySelector('.analytics-warning');
+            
+            if (!warningDiv) {
+                warningDiv = document.createElement('div');
+                warningDiv.className = 'analytics-warning';
+                warningDiv.style.cssText = `
+                    background-color: rgba(255, 149, 0, 0.1);
+                    color: #ff9500;
+                    padding: 15px 20px;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                    font-weight: 500;
+                    border-left: 4px solid #ff9500;
+                `;
+                container.insertBefore(warningDiv, container.firstChild);
+            }
+            
+            warningDiv.textContent = `⚠️ ${message}`;
+        }
+
+        function showAnalyticsError(message) {
+            const container = document.querySelector('.container');
+            let errorDiv = container.querySelector('.error-message');
+            
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                container.insertBefore(errorDiv, container.firstChild);
+            }
+            
+            errorDiv.textContent = message;
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            initCharts();
+            fetchAnalytics();
+            
+            // Refresh every 30 seconds
+            setInterval(fetchAnalytics, 30000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuth()) {
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            } else {
+                initDashboard();
+            }
+        });
+    </script>
+</body>
+</html> 
